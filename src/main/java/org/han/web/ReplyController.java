@@ -1,5 +1,6 @@
 package org.han.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -7,6 +8,7 @@ import javax.inject.Inject;
 import org.han.service.ReplyService;
 import org.han.vo.ReplyVO;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +24,12 @@ public class ReplyController {
 	ReplyService service;
 	
 	@RequestMapping("/list")
-	public @ResponseBody List<ReplyVO> list(@RequestParam(value="bno", defaultValue="0") int bno){
-		return service.list(bno);
+	public @ResponseBody List<ReplyVO> list(@ModelAttribute ReplyVO vo){
+		return service.list(vo);
+	}
+	
+	@RequestMapping("/create")
+	public @ResponseBody List<ReplyVO> create(@ModelAttribute ReplyVO vo){
+		return service.create(vo);
 	}
 }

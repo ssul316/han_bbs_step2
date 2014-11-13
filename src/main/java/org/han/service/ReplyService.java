@@ -14,7 +14,12 @@ public class ReplyService {
 	@Inject
 	ReplyMapper mapper;
 	
-	public List<ReplyVO> list(int bno){
-		return mapper.list(bno);
+	public List<ReplyVO> list(ReplyVO vo){
+		return mapper.list(vo.getBno());
+	}
+	
+	public List<ReplyVO> create(ReplyVO vo){
+		mapper.create(vo);
+		return mapper.list(vo.getBno());
 	}
 }
