@@ -32,4 +32,14 @@ public class ReplyController {
 	public @ResponseBody List<ReplyVO> create(@ModelAttribute ReplyVO vo){
 		return service.create(vo);
 	}
+	
+	@RequestMapping("/delete")
+	public @ResponseBody List<ReplyVO> delete(@ModelAttribute ReplyVO vo){
+		return service.delete(vo);
+	}
+	
+	@RequestMapping("/update")
+	public @ResponseBody List<ReplyVO> update(@ModelAttribute ReplyVO vo){
+		return service.update(vo);
+	}
 }

@@ -22,4 +22,14 @@ public class ReplyService {
 		mapper.create(vo);
 		return mapper.list(vo.getBno());
 	}
+	
+	public List<ReplyVO> delete(ReplyVO vo){
+		mapper.delete(vo);
+		return mapper.list(vo.getBno());
+	}
+	
+	public List<ReplyVO> update(ReplyVO vo){
+		mapper.update(vo);
+		return mapper.list(vo.getBno());
+	}
 }

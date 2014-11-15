@@ -23,11 +23,14 @@ public class ReplyServiceTest {
 	@Inject
 	ReplyVO vo;
 	
-//	@Test
-//	public void listTest(){
-//		List<ReplyVO> list = service.list(585);
-//		logger.info(list);
-//	}
+	@Test
+	public void updateTest(){
+		vo.setBno(603);
+		vo.setCont("µÇ³ª¿ä??");
+		vo.setRno(145);
+
+		logger.info(service.update(vo));
+	}
 	
 	
 

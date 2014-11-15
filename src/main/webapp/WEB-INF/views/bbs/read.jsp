@@ -12,49 +12,91 @@
 	<br>
 	<p>${vo.cont }</p>
 	<br>
-	<button><a href="uboard?bno=${vo.bno }">수정</a></button>
-	<button><a href="delete?bno=${vo.bno }">삭제</a></button>
+	<button <!-- onclick="updateBtn();">수정 --><a href="uboard?bno=${vo.bno }">수정</a></button>
+	<button <!-- onclick="delBtn();">삭제 --><a href="delete?bno=${vo.bno }">삭제</a></button>
 	
-	<form class="replyForm">
+	<form class="replyForm" name="replyForm">
 		<p>덧글을 작성하세요</p>
-		작성자<input type="text" name="userid" value="han00">
-		덧글내용<input type="text" name="cont" value="덧글">
+		작성자<input type="text" name="userid">
+		덧글내용<input type="text" name="cont">
 		<input type="hidden" name="bno" value=${vo.bno }>
+		<input type="hidden" name="rno">
 	</form>
 		<button class="putReply">리플달긔</button>
-	<div class="bbs"></div>
+	<div class="reply"></div>
 	
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script>
-		$(document).ready(replyList());
-		console.log($(".replyForm").serialize());
-	
-	    $(".putReply").on("click", replyAction);
+		$(document).ready(function(){
+			replyList();
+		});
 		
-	    function replyAction(){
-	        /* url = "reply/list?bno=" + ${vo.bno} + "&cont=" + document.replyForm.cont.value + "&userid=" + document.replyForm.userid.value; */
-	        /* url = "reply/list" + $(".replyForm").serialize();
-	        replyList(url); */
-	        //var $reply = $("#reply");
-	        //var $line = $("#line")
-	        var target = $(".bbs");
+		$(".putReply").on("click", replyCreate);
+		
+		function replyList(){
+			var url = "reply/list";
+			//var postData = $(".replyForm").serialize();
+			replyAction(url);
+		}
+		
+		function updateBtn(){
+			alert('aaa');
+			//내부 로직 정의
+		}
+		
+		function delBtn(){
+			alert('delete');
+		}
 
-	        $.post("reply/create", $(".replyForm").serialize(), function(data){
-	        	console.log(data);
-	        	var items = [];
-	        	var content = "";
+		function replyCreate(){
+			var url = "reply/create";
+			replyAction(url);
+			document.replyForm.userid.value = "";
+			document.replyForm.cont.value = "";
+		}
+		
+		function replyDelete(num){
+			document.replyForm.rno.value = num;
+			var url = "reply/delete";
+			replyAction(url);
+		}
+		
+		function replyUpdate(){
+			document.replyForm.rno.value = document.getElementById("modifyReplyRno").value;
+			document.replyForm.cont.value = document.getElementById("modifyReplyCont").value;
+			var url = "reply/update";
+			replyAction(url);
+			document.replyForm.rno.value = "";
+			document.replyForm.cont.value = "";
+		}
+
+		function changeForm(num, msg){
+			var target = document.getElementById('reply_' + num);
+			target.innerHTML ="<div>덧글을 수정해주세요."
+				+"<textarea id='modifyReplyCont' name='cont' rows='1' cols='50'>"+msg+"</textarea>"
+				+"<input id='modifyReplyRno' type='hidden' name='rno' value='"+num+"'>"
+				+"<input type='button' value='수정' onclick='replyUpdate()'>"
+				+"</div>"
+		}
+		
+		function replyAction(url){
+		    var target = $(".reply");
+		    $.post(url, $(".replyForm").serialize(), function(data){
+		    	// $(".replyForm").serialize() - 목표가 되는 form의 파라미터들을 a=1&b=2&c=3 식으로 get이나 post방식에 적용하기 편하게 만들어줌
+		    	console.log(data);
+		    	var items = [];
+		    	var content = "";
 				$.each(data, function (key, val) {
 					console.log(key, val);
 					//items.push("<ul><li>"+val.cont+"</li></ul>") // 배열사용
-					content += "<ul><li>"+val.cont+"</li></ul>"; // 문자열 사용
-					/* items.push("<ul id='" + key + "'>"
-						+("<li class=\"bno\">"+val.bno+"</li>")
-						+("<li class=\"readtitle\"><a href='read?bno="+val.bno+"'>"+val.title+"</a></li>")
-						+("<li class=\"writer\">"+val.userid+"</li>")
-						+("<li class=\"writedate\">"+val.regdate+"</li>")
-						+("<li class=\"viewcount\">"+val.vcount+"</li>")+"</ul>")   */
+					content += "<ul><li id='reply_"+val.rno+"' name='reply_"+val.rno+"'>"+val.cont
+						+"<input type='button' value='수정' onclick='changeForm(" + val.rno + ",\"" + val.cont +"\""
+						+")'>"
+						+"<input type='button' value='삭제' onclick='replyDelete("+val.rno
+						+")'></li></ul>"; // 문자열 사용
 				});
 				
+				// content += "<script>function replyDelete(num){document.replyForm.rno.value = num\; var url = "reply/delete"\; replyAction(url)\;}<"+"/script>";
 				// 배열을 사용한 방식은 items.join("")으로 문자열을 만들어주고
 				// 문자열을 사용한 방식은 문자열에 계속 붙여주는 방식임. getSql할때 StringBuilder를 사용했던것과 같음
 				
@@ -63,33 +105,10 @@
 					html: items.join("")
 				}).appendTo(target); */
 				// div가 append로 추가됨. 무한덧글할때 사용하면 될듯
- 				
+				
 				target.html(content);
 				// target에 innerHTML로 덮어써주는 방식
-	        });
-	    }
-	
-		
-		function replyList(){
-			var url = "reply/list?bno=" + ${vo.bno};
-			var target = $(".bbs");
-			$.getJSON(url, function (data) {
-				var items = [];
-				$.each(data, function (key, val) {
-					console.log(key, val);
-					items.push("<ul><li>"+val.cont+"</li></ul>")
-					/* items.push("<ul id='" + key + "'>"
-						+("<li class=\"bno\">"+val.bno+"</li>")
-						+("<li class=\"readtitle\"><a href='read?bno="+val.bno+"'>"+val.title+"</a></li>")
-						+("<li class=\"writer\">"+val.userid+"</li>")
-						+("<li class=\"writedate\">"+val.regdate+"</li>")
-						+("<li class=\"viewcount\">"+val.vcount+"</li>")+"</ul>")   */
-				});
-				$("<div/>", {
-					"class": "line",
-					html: items.join("")
-				}).appendTo(target);
-			});
+		    });
 		}
 	</script>
 </body>
