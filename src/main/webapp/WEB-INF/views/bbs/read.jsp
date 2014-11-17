@@ -12,8 +12,10 @@
 	<br>
 	<p>${vo.cont }</p>
 	<br>
-	<button <!-- onclick="updateBtn();">수정 --><a href="uboard?bno=${vo.bno }">수정</a></button>
-	<button <!-- onclick="delBtn();">삭제 --><a href="delete?bno=${vo.bno }">삭제</a></button>
+	<!-- <button onclick="updateBtn();">수정</button>
+	<button onclick="delBtn();">삭제</button> -->
+	<button><a href="uboard?bno=${vo.bno }">수정</a></button>
+	<button><a href="delete?bno=${vo.bno }">삭제</a></button>
 	
 	<form class="replyForm" name="replyForm">
 		<p>덧글을 작성하세요</p>
